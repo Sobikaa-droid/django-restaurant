@@ -1,0 +1,6 @@
+asgiref==3.6.0
+Django==4.1.7
+django-widget-tweaks==1.4.12
+Pillow==9.4.0
+sqlparse==0.4.3
+tzdata==2022.7
