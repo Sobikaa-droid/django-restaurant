@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Successful payment{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center mt-5">
+  <div class="w-25 text-center">
+    <h1 class="mb-2">Thank you!</h1>
+    <p class="text-secondary">You can look at your purchases in the orders or proceed on browsing the Menu</p>
+    <div class="d-flex text-center justify-content-center mt-2">
+      <a type="button" class="btn btn-lg btn-outline-dark" href="{% url 'menu:menu' %}">Back to Menu</a>
+      <a type='button' class="btn btn-lg btn-primary ms-3" href="{% url 'orders:orders' %}">Orders</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

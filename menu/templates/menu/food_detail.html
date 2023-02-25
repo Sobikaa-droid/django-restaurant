@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ food.name }}{% endblock %}
+
+{% load static %}
+
+{% block content %}
+
+{% load widget_tweaks %}
+
+<div class="container mt-5">
+  <div class="food_detail d-flex flex-wrap justify-content-center">
+    <img class="food_detail_image" src="{{ food.image.url }}">
+    <div class='food_detail_info ms-5'>
+      <h1>{{ food.name }}</h1>
+      <div class="mb-4 mt-4">
+        <h2>${{ food.price }} <span class="badge cart_badge ms-3">{{ food.stock }} left</span></h2>
+      </div>
+      <hr>
+      <p class="">{{ food.description }}</p>
+      <hr>
+
+      {% if food.stock == 0 %}
+      <button type="submit" class="btn btn-lg btn-outline-dark" disabled>OUT OF STOCK</button>
+      {% else %}
+
+      <form method="POST" action="{% url 'cart:add' food.pk %}"> {% csrf_token %}
+        <div class="d-flex mt-4">
+          {% for field in form %}
+          {% render_field field name="amount" min="1" max="50" oninput="this.value = Math.abs(this.value)" class="form-control form_control_amount_detail" value="1" %}
+          {% endfor %}
+          <div class="ms-3">
+            <button type="submit" class="btn btn-lg btn-outline-dark">Add to Cart</button>
+          </div>
+        </div>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

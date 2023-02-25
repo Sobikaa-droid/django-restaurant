@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Cartoon Restaurant{% endblock %}
+
+{% block content %}
+
+{% load static %}
+
+<div id="banner">
+  <div class="banner_image banner_image_home"></div>
+  <h1 class="text-center banner_text banner_home_text text-white user-select-none">Le Petite Appétit</h1>
+</div>
+<div class="container">
+  <div class="px-4 my-5 text-center">
+    <img class='navbar_logo mb-3' src="{% static 'bart-simpson.gif' %}" width="130" height="100">
+    <h1 class="display-6 fw-bold">Welcome</h1>
+    <div class="col-lg-6 mx-auto">
+      <p class="lead mb-3 text-secondary">Curabitur non faucibus neque. Nulla ac mauris luctus, pellentesque sem at, efficitur purus. In nunc dui, ornare viverra lectus ut, ornare pulvinar velit. Maecenas facilisis risus sit amet tincidunt posuere. Nunc dignissim ex eu auctor feugiat.</p>
+      <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <a type="button" href="{% url 'menu:menu' %}" class="btn btn-lg btn-outline-dark btn-lg px-4 gap-3">Browse the Menu</a>
+      </div>
+    </div>
+  </div>
+  <hr class="border border-1 opacity-75 footer_hr">
+  <div class="container py-5" id="hanging-icons">
+    <div class="row g-4 mt-5 mb-4 row-cols-1 row-cols-lg-3">
+      <div class="col d-flex align-items-start">
+        <div class="icon-square d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
+          <h2 class="icon_pink"><i class="fa-solid fa-truck-fast"></i></h2>
+        </div>
+        <div>
+          <h3 class="fs-2">Fast delivery</h3>
+          <p class="text-secondary">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse vitae turpis faucibus, auctor elit ut, feugiat velit. Quisque neque tortor, mattis ut lobortis id, tristique ut ante.</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <div class="icon-square d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
+          <h2 class="icon_pink"><i class="fa-solid fa-gem"></i></h2>
+        </div>
+        <div>
+          <h3 class="fs-2">Quality</h3>
+          <p class="text-secondary">Vestibulum gravida velit augue, vitae commodo nisl faucibus eu. Pellentesque tincidunt ultricies justo. Cras feugiat arcu a massa pellentesque, eget blandit metus auctor.</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <div class="icon-square d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3">
+          <h2 class="icon_pink"><i class="fa-solid fa-tags"></i></h2>
+        </div>
+        <div>
+          <h3 class="fs-2">Hot prices</h3>
+          <p class="text-secondary">Pellentesque tincidunt ultricies justo. Cras feugiat arcu a massa pellentesque, eget blandit metus auctor. In eget turpis euismod, hendrerit est at, consectetur lectus.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Menu{% endblock %}
+
+{% load static %}
+
+{% block content %}
+<div class="bg-white">
+  <div id="banner">
+    <div class="banner_image banner_image_menu"></div>
+    <h1 class="text-center banner_text text-white user-select-none">Menu</h1>
+  </div>
+  <div class="container mt-5">
+    <div class="row row-cols-xxl-4 row-cols-xl-4 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 g-4">
+      {% for food in foods %}
+      <div class="col">
+        <div class="card bg-transparent">
+          <a href="{% url 'menu:detail' food.pk %}" class="card_image_link text-decoration-none">
+            <img src="{{ food.image.url }}" class="card-img-top card_image">
+          </a>
+          <div class="card-body">
+            <a href="{% url 'menu:detail' food.pk %}" class="card_text_link link-dark text-decoration-none">
+              <h3 class="card-title card_title_text">{{ food.name }}</h3>
+            </a>
+            <h6 class="text-muted">
+              {% for category in food.categories.all|slice:":5" %}
+              {% if forloop.counter != 5 %}
+              {{ category }} /
+              {% else %}
+              ...
+              {% endif %}
+              {% endfor %}
+            </h6>
+          </div>
+          <div class="card-footer bg-transparent">
+            <h5 class="card_footer_element">${{ food.price }}</h5>
+            {% if food.stock == 0 %}
+            <button type="submit" class="btn btn-outline-dark btn_add_to_cart" disabled>OUT OF STOCK</button>
+            {% else %}
+            <form method="POST" action="{% url 'cart:add' food.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-dark btn_add_to_cart">Add to Cart</button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {% if page_obj.paginator.num_pages > 1 %}
+  <!-- Pagination -->
+  <nav aria-label="Page navigation example page_navigation">
+    <ul class="pagination justify-content-center mt-5">
+      <li class="page-item {% if page_obj.has_previous %}enabled{% else %}disabled{% endif %}">
+        <a class="page-link" href="?page=1" aria-label="First">
+          <span aria-hidden='true'>&laquo;</span>
+        </a>
+      </li>
+      {% for page in page_obj.paginator.page_range %}
+      <li class="page-item {% if page == page_obj.number %} active {% endif %}"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+      {% endfor %}
+      <li class="page-item {% if page_obj.has_next %}enabled{% else %}disabled{% endif %}">
+        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}Cart{% endblock %}
+
+{% block content %}
+
+<div id="banner">
+  <div class="banner_image banner_image_cart"></div>
+  <h1 class="text-center banner_text text-white user-select-none">Cart</h1>
+</div>
+<div class="container mt-5">
+  {% if page_obj.paginator.count != 0 %}
+  <div class="justify-content-between mt-4">
+    <div class="d-flex">
+      <h2 class="text-primary">Your cart: <span class="badge cart_badge">{{ request.session.cart_total }}/50 in total</span></h2>
+      <!-- Button trigger modal clear cart -->
+      <a href='#' class="btn btn-cart_delete btn-lg btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modal-clear-cart">
+        <i class="fa-solid fa-trash"></i>
+      </a>
+      <!-- Modal Clear Cart -->
+      <div class="modal fade" id="modal-clear-cart" tabindex="-1" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="ClearCartModalLabel">Confirmation</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Are you sure you want to delete all objects in cart?</p>
+            </div>
+            <div class="modal-footer">
+              <form method="POST" action="{% url 'cart:clear_cart' %}"> {% csrf_token %}
+                <button class="btn btn-outline-primary me-2" type="submit">Confirm</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ############ -->
+    </div>
+  </div>
+  <form method="POST" action="{% url 'cart:update_all' %}"> {% csrf_token %}
+    <table class="table table-borderless">
+      <tbody>
+        {% for cart_object in page_obj %}
+        <tr>
+          <td class="align-middle cart_object_table_image">
+            <a href="{% url 'menu:detail' cart_object.menu.pk %}" class="text-decoration-none link-secondary">
+              <img src="{{ cart_object.menu.image.url }}" class="cart_object_image">
+            </a>
+          </td>
+          <td class="align-middle cart_object_table_name">
+            <a href="{% url 'menu:detail' cart_object.menu.pk %}" class="text-decoration-none link-secondary">
+              <h5>{{ cart_object.menu.name }}</h5>
+            </a>
+          </td>
+          <td class="align-middle">
+            <input type="submit" id="submit-form" style="visibility: hidden;">
+          </td>
+          <td class="align-middle">
+            <h5>${{ cart_object.price }}</h5>
+          </td>
+          <td class="align-middle">
+            <input type="number" min="1" max="50" oninput="this.value = Math.abs(this.value)" name="amount" id="amount_{{ forloop.counter }}" class="form-control form_control_amount" value="{{ cart_object.amount }}">
+          </td>
+          <td class="align-middle">
+            <h5>{% if cart_object.menu.stock == 0 %} OUT OF STOCK {% else %}{{ cart_object.menu.stock }} left {% endif %}</h5>
+          </td>
+          <td class="align-middle">
+            <!-- Button trigger modal delete -->
+            <a href='#' class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#modal-delete-item-{{ cart_object.pk }}">
+              <h5><i class="fa-solid fa-xmark text-danger"></i></h5>
+            </a>
+            <!-- Modal delete -->
+            <div class="modal fade" id="modal-delete-item-{{ cart_object.pk }}" tabindex="-1" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="DeleteModalLabel">Confirmation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p>Are you sure you want to delete "{{ cart_object.menu.name }}"?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <!-- this form IS NOT visible (IDK WHY) -->
+                    <form>
+                    </form>
+                    <form method="POST" action="{% url 'cart:delete' cart_object.pk %}"> {% csrf_token %}
+                      <button class="btn btn-outline-primary me-2" type="submit">Confirm</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- ############ -->
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </form>
+  {% endif %}
+
+  {% if page_obj.paginator.num_pages > 1 %}
+  <!-- Pagination -->
+  <nav aria-label="Page navigation example page_navigation">
+    <ul class="pagination justify-content-center mt-5">
+      <li class="page-item {% if page_obj.has_previous %}enabled{% else %}disabled{% endif %}">
+        <a class="page-link" href="?page=1" aria-label="First">
+          <span aria-hidden='true'>&laquo;</span>
+        </a>
+      </li>
+      {% for page in page_obj.paginator.page_range %}
+      <li class="page-item {% if page == page_obj.number %} active {% endif %}"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+      {% endfor %}
+      <li class="page-item {% if page_obj.has_next %}enabled{% else %}disabled{% endif %}">
+        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  {% endif %}
+
+  {% if page_obj.paginator.count == 0 %}
+  <div class="text-center">
+    <h1>Your cart is currently empty</h1>
+    <a type="button" class="btn btn-lg btn-outline-dark btn_back_to_cart" href="{% url 'menu:menu' %}">Order Now</a>
+  </div>
+  {% else %}
+  <div class="d-flex flex-row justify-content-between flex-wrap mt-4">
+    <div class="back_to_menu_col">
+      <a type="button" class="btn btn-lg btn-outline-dark btn_back_to_cart" href="{% url 'menu:menu' %}"><i class="fa-solid fa-arrow-left"></i> Back to ordering</a>
+    </div>
+    <div class="p-2 me-2">
+      <h4 class="text-end">Total (USD): ${{ total_price }}</h4>
+    </div>
+    <div class="me-2">
+      <button class="btn btn-lg btn-outline-success" onclick="document.getElementById('submit-form').click()">Save</button>
+    </div>
+    <div class="">
+      <a type="button" href="{% url 'cart:checkout' %}" class="btn btn-lg btn-primary">Proceed to Checkout</a>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

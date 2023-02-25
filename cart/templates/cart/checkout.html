@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+
+{% load widget_tweaks %}
+
+<div class="container user_form d-flex justify-content-center">
+  <div class="row g-5 w-50">
+    <div class="col order-md-last">
+      <h4 class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-primary">Your cart</span>
+        <span class="badge bg-primary rounded-pill">{{ request.session.cart_total }}</span>
+      </h4>
+      <ul class="list-group mb-3">
+        {% for cart_object in cart %}
+        <li class="list-group-item d-flex justify-content-between lh-sm">
+          <div>
+            <h6 class="my-0">{{ cart_object.menu.name }}</h6>
+            <small class="text-muted">x{{ cart_object.amount }}</small>
+          </div>
+          <span class="text-muted">${{ cart_object.price }}</span>
+        </li>
+        {% endfor %}
+        <li class="list-group-item d-flex justify-content-between">
+          <span>Total (USD)</span>
+          <strong>${{ total_price }}</strong>
+        </li>
+      </ul>
+
+    </div>
+    <div class="col">
+      <h3 class="mb-3">Payment info</h3>
+      <form method="POST"> {% csrf_token %}
+        <div class="col-sm-13">
+          {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label">{{ field.label }}</label>
+            {% render_field field class="form-control" placeholder=field.help_text %}
+          </div>
+          {% endfor %}
+        </div>
+        <hr class="my-4">
+        <button class="w-100 btn btn-primary btn-lg" type="submit">Finish payment</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

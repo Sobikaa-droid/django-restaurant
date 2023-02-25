@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Orders{% endblock %}
+
+{% load static %}
+
+{% block content %}
+<div class="bg-white">
+  <div id="banner">
+    <div class="banner_image banner_image_orders"></div>
+    <h1 class="text-center banner_text text-white user-select-none">Orders</h1>
+  </div>
+  <div class="container mt-5">
+    {% if orders.count == 0 %}
+    <div class="text-center">
+    <h1>Your haven't ordered anything yet</h1>
+      <a type="button" class="btn btn-lg btn-outline-dark btn_back_to_cart" href="{% url 'menu:menu' %}">Order Now</a>
+    </div>
+    {% else %}
+    <div class="row row-cols-xxl-3 row-cols-xl-3 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 g-5">
+      {% for order in orders %}
+      <div class="col">
+        <h4 class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-primary">Order #{{ order.pk }}</span>
+          <span class="badge bg-primary">{{ order.date }}</span>
+        </h4>
+        <ul class="list-group">
+          <li class="list-group-item justify-content-between lh-sm">
+            <div class="accordion accordion-flush" id="accordionFlushExample">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-headingOne">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{ order.pk }}" aria-expanded="false" aria-controls="flush-collapseOne">
+                    Products
+                  </button>
+                </h2>
+                <div id="flush-collapse{{ order.pk }}" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                  <div class="accordion-body">
+                    {% for key, value in order.products.items %}
+                    <div class="d-flex justify-content-between">
+                      <h6 class="my-1"><a href="{{ value.image }}" class="text-decoration-none">{{ key }}</a> <small class="text-muted">(x{{ value.amount }})</small></h6>
+                      <span class="text-muted">${{ value.price }}</span>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Address</span>
+            <strong>{{ order.email_address }}</strong>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Payment type</span>
+            <strong>{{ order.payment_type }}</strong>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Total amount</span>
+            <strong>{{ order.total_amount }}</strong>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Total (USD)</span>
+            <strong>${{ order.total_price }}</strong>
+          </li>
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  {% if page_obj.paginator.num_pages > 1 %}
+  <!-- Pagination -->
+  <nav aria-label="Page navigation example page_navigation">
+    <ul class="pagination justify-content-center mt-5">
+      <li class="page-item {% if page_obj.has_previous %}enabled{% else %}disabled{% endif %}">
+        <a class="page-link" href="?page=1" aria-label="First">
+          <span aria-hidden='true'>&laquo;</span>
+        </a>
+      </li>
+      {% for page in page_obj.paginator.page_range %}
+      <li class="page-item {% if page == page_obj.number %} active {% endif %}"><a class="page-link" href="?page={{ page }}">{{ page }}</a></li>
+      {% endfor %}
+      <li class="page-item {% if page_obj.has_next %}enabled{% else %}disabled{% endif %}">
+        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  {% endif %}
+
+</div>
+{% endblock %}
