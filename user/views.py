@@ -17,7 +17,8 @@ def register_user(request):
 
             request.session['cart_total'] = Cart.objects.filter(user=request.user).count()
             return redirect('home')
-        messages.error(request, "Error. Invalid information.")
+
+        messages.error(request, form.errors)
 
     form = NewUserForm(request.POST)
     return render(request, template_name="user/register.html", context={"form": form})
@@ -35,10 +36,8 @@ def login_user(request):
 
                 request.session['cart_total'] = Cart.objects.filter(user=request.user).count()
                 return redirect('home')
-            else:
-                messages.error(request, "Invalid username or password.")
-        else:
-            messages.error(request, "Invalid username or password.")
+
+        messages.error(request, form.errors)
 
     form = AuthenticationForm(request.POST)
     return render(request, template_name="user/login.html", context={"form": form})
