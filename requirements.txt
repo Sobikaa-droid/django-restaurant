@@ -6,3 +6,4 @@ Pillow==9.4.0
 python-decouple==3.7
 sqlparse==0.4.3
 tzdata==2022.7
+whitenoise==6.4.0
