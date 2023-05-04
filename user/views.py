@@ -1,50 +1,51 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
+from django.urls import reverse_lazy
+from django.views.generic import FormView
+from django.contrib.auth.views import LogoutView
 
 from .forms import NewUserForm
 from cart.models import Cart
 
 
-def register_user(request):
-    if request.method == "POST":
-        form = NewUserForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
+class RegisterUserView(FormView):
+    form_class = NewUserForm
+    success_url = reverse_lazy('home')
+    template_name = 'user/register.html'
 
-            request.session['cart_total'] = Cart.objects.filter(user=request.user).count()
-            return redirect('home')
+    def form_valid(self, form):
+        form.save()
+        new_user = authenticate(username=form.cleaned_data['username'],
+                                password=form.cleaned_data['password1'],
+                                )
+        login(self.request, new_user)
 
-        messages.error(request, form.errors)
+        self.request.session['cart_total'] = Cart.objects.filter(user=self.request.user).count()
+        return super().form_valid(form)
 
-    form = NewUserForm(request.POST)
-    return render(request, template_name="user/register.html", context={"form": form})
+    def form_invalid(self, form):
+        messages.error(self.request, form.errors)
 
-
-def login_user(request):
-    if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-
-                request.session['cart_total'] = Cart.objects.filter(user=request.user).count()
-                return redirect('home')
-
-        messages.error(request, form.errors)
-
-    form = AuthenticationForm(request.POST)
-    return render(request, template_name="user/login.html", context={"form": form})
+        return super().form_invalid(form)
 
 
-@login_required(login_url='user:register')
-def logout_user(request):
+class LoginUserView(FormView):
+    form_class = AuthenticationForm
+    success_url = reverse_lazy('home')
+    template_name = 'user/login.html'
 
-    logout(request)
-    return redirect('home')
+    def form_valid(self, form):
+        login(self.request, form.get_user())
+
+        self.request.session['cart_total'] = Cart.objects.filter(user=self.request.user).count()
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, form.errors)
+
+        return super().form_invalid(form)
+
+
+class LogoutUserView(LogoutView):
+    next_page = reverse_lazy('home')

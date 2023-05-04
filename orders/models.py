@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
+from django.conf import settings
 
 
 class Order(models.Model):
@@ -10,7 +10,7 @@ class Order(models.Model):
     payment_type = models.CharField(max_length=100)
     total_amount = models.IntegerField(default=1)
     total_price = models.DecimalField(max_digits=100, decimal_places=2)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Order {self.pk}"

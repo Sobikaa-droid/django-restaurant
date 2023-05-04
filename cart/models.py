@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 from menu.models import Food
 
@@ -38,7 +38,7 @@ class Cart(models.Model):
     price = models.DecimalField(max_digits=100, decimal_places=2)
     amount = models.PositiveIntegerField(default=1, validators=[
         MinValueValidator(1, message='Amount can not be less than 1')])
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     objects = CartManager()
 
